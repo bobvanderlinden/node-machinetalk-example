@@ -1,0 +1,20 @@
+{
+  "name": "node-machinetalk-example",
+  "main": "index.js",
+  "version": "0.0.0",
+  "authors": [
+    "Bob van der Linden <bobvanderlinden@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "static/components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "threejs": "*"
+  }
+}
