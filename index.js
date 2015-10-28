@@ -14,7 +14,10 @@ browser.on('serviceUp', function(machine, serviceName, dsn) {
     io.emit('status', status);
   });
   statusclient.connect();
+  statusclient.subscribe('task');
   statusclient.subscribe('motion');
+  statusclient.subscribe('io');
+  statusclient.subscribe('interp');
 });
 browser.start();
 
