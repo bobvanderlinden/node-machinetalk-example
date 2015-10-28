@@ -1,99 +1,113 @@
-// Initialize THREE
-var scene = new THREE.Scene();
-scene.translateX(-65);
+define(['eventbus', 'c', 'socket', 'statusbox', 'preview', 'control_dpad', 'control_height', 'control_mode', 'control_state'], function(eventbus, c, socket, statusbox, preview, control_dpad, control_height, control_mode, control_state) {
+  function createButton(name, onclick) {
+    var button = document.createElement('button');
+    button.className = 'ui button';
+    button.textContent = name;
+    button.onclick = onclick;
+    return button;
+  }
 
-var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 0, 100);
+  function createContainer(name, children) {
+    var container = document.createElement('div');
+    container.className = 'ui message';
+    children.forEach(function(child) {
+      container.appendChild(child);
+    });
+    return container;
+  }
+
+  function execCommand(name, args) {
+    eventbus.emit('command', name, args);
+  }
+  function createCommandFn(name, args) {
+    return function() {
+      return execCommand(name, args);
+    };
+  }
+
+  var controlContainer = createContainer('Control', [
+    createButton('Home', function() {
+      execCommand('emcTaskSetMode', ['execute', 1]);
+
+      execCommand('emcAxisUnhome', [0]);
+      execCommand('emcAxisUnhome', [1]);
+      execCommand('emcAxisUnhome', [2]);
+
+      execCommand('emcAxisHome', [0]);
+      execCommand('emcAxisHome', [1]);
+      execCommand('emcAxisHome', [2]);
+    }),
+
+    control_dpad, control_height
+  ]);
+
+  var mdiContainer = (function() {
+    var mdiinput;
+    return createContainer('MDI', [
+      c('div', {class: 'ui input'}, [
+        mdiinput = c('input',{},[])
+      ]),
+      createButton('Execute', function() {
+        execCommand('emcTaskSetMode', ['execute', 3]);
+        execCommand('emcTaskPlanExecute', ['execute', mdiinput.value]);
+        mdiinput.value = '';
+      })
+    ]);
+  })();
+
+  var programContainer = (function() {
+    var pathinput;
+
+    function onopen() {
+      execCommand('emcTaskPlanOpen', ['execute', pathinput.value]);
+    }
+
+    function oninit() {
+      //execCommand('emcTaskPlanInit', ['execute']);
+    }
+
+    function onpause() {
+      execCommand('emcTaskPlanPause', ['execute']);
+    }
+
+    function onresume() {
+      execCommand('emcTaskPlanResume', ['execute']);
+    }
+
+    function onrun() {
+      execCommand('emcTaskPlanRun', ['execute',0]);
+    }
+
+    return createContainer('Program', [
+      c.div({ class: 'ui input' }, [pathinput = c('input')]),
+      c.button('Open', onopen),
+      c.button('Init', oninit),
+      c.button('Pause', onpause),
+      c.button('Resume', onresume),
+      c.button('Run', onrun)
+    ]);
+  })();
 
 
-var renderer = new THREE.WebGLRenderer();
-renderer.setSize(800, 600);
+  var rootElement = c('div', {}, [
+    preview.element,
+    c.div({}, [control_mode]),
+    c.div({}, [control_state]),
+    controlContainer,
+    mdiContainer,
+    programContainer,
+    statusbox
+  ]);
 
-var controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = 0.25;
-controls.enableZoom = false;
+  function onDomLoaded() {
+    console.log(typeof rootElement);
+    document.body.appendChild(rootElement);
+  }
 
-// var controls = new THREE.FlyControls(camera, renderer.domElement);
-// controls.dragToLook = true;
-
-var light = new THREE.AmbientLight(0x404040);
-scene.add(light);
-for(var i=0;i<5;i++) {
-  var light = new THREE.PointLight(0x333333, 1, 0);
-  light.position.set(i*20-10, 0, 0);
-  scene.add(light);
-}
-
-function createPhongMaterial(color) {
-  return new THREE.MeshPhongMaterial({
-    color: color,
-    emissive: 0x000000,
-    specular: 0x111111,
-    shininess: 30,
-    shading: THREE.FlatShading
-  });
-}
-
-var cube = new THREE.Mesh(
-  new THREE.BoxGeometry(5, 5, 5),
-  createPhongMaterial(0xffffff)
-);
-
-scene.add(cube);
-
-var headGeometry = new THREE.CylinderGeometry(0, 2, 10, 32);
-headGeometry.rotateX(-Math.PI / 2);
-headGeometry.translate(0, 0, 5);
-var head = new THREE.Mesh(
-  headGeometry,
-  createPhongMaterial(0xcccccc)
-);
-head.position.set(0, 0, 0);
-scene.add(head);
-
-var traceMaxLength = 500;
-var traceGeometry = new THREE.BufferGeometry();
-var tracePositions = new Float32Array(traceMaxLength * 3);
-traceGeometry.addAttribute('position', new THREE.BufferAttribute(tracePositions, 3));
-var traceLength = 2;
-//traceGeometry.setDrawRange(0, traceLength);
-traceGeometry.dynamic = true;
-
-var traceMaterial = new THREE.LineBasicMaterial({
-  color: 0xffffff,
-  opacity: 1,
-  linewidth: 3
-});
-var traceLine = new THREE.Line(traceGeometry, traceMaterial);
-scene.add(traceLine);
-
-var statusBox = document.createElement('pre');
-var socket = io();
-
-socket.on('status', function(status) {
-  statusBox.textContent = JSON.stringify(status, '  ', '  ');
-  tracePositions[traceLength * 3 + 0] = status.motion.position.x;
-  tracePositions[traceLength * 3 + 1] = status.motion.position.y;
-  tracePositions[traceLength * 3 + 2] = status.motion.position.z;
-  traceLength++;
-  traceGeometry.setDrawRange(0, traceLength);
-  traceLine.geometry.attributes.position.needsUpdate = true;
-
-  head.position.set(
-    status.motion.position.x,
-    status.motion.position.y,
-    status.motion.position.z
-  );
-});
-
-function render() {
-  requestAnimationFrame(render);
-  renderer.render(scene, camera);
-}
-render();
-
-document.addEventListener("DOMContentLoaded", function(event) {
-  document.body.appendChild(renderer.domElement);
-  document.body.appendChild(statusBox);
+  console.log('readystate', document.readyState);
+  if (document.readyState === 'complete') {
+    onDomLoaded();
+  } else {
+    document.addEventListener("DOMContentLoaded", onDomLoaded);
+  }
 });

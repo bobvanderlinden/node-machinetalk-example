@@ -1,0 +1,9 @@
+.control.dpad {
+    display: inline-block;
+    background-color: #0000ff;
+}
+
+.control.height {
+    display: inline-block;
+    background-color: #3333ff;
+}
