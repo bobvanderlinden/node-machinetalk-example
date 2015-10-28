@@ -6,10 +6,13 @@ var io = require('socket.io')(http);
 
 app.use(express.static(__dirname + '/static'));
 
+var taskcommandclient;
+var statusclient;
+
 var browser = new machinetalk.MachineTalkBrowser();
 browser.on('serviceUp', function(machine, serviceName, dsn) {
   if (serviceName !== 'status') { return; }
-  var statusclient = new machinetalk.StatusClient(dsn);
+  statusclient = new machinetalk.StatusClient(dsn);
   statusclient.on('statuschanged', function(status) {
     io.emit('status', status);
   });
@@ -19,10 +22,25 @@ browser.on('serviceUp', function(machine, serviceName, dsn) {
   statusclient.subscribe('io');
   statusclient.subscribe('interp');
 });
+browser.on('serviceUp', function(machine, serviceName, dsn) {
+  if (serviceName !== 'command') { return; }
+  taskcommandclient = new machinetalk.TaskCommandClient(dsn);
+  taskcommandclient.connect();
+});
 browser.start();
 
 io.on('connection', function(socket) {
   console.log('user connected');
+  if (statusclient) {
+    socket.emit('status', statusclient.status);
+  }
+  socket.on('command', function(commandName, args) {
+    taskcommandclient[commandName].apply(taskcommandclient, args);
+  });
+
+  socket.on('disconnect', function() {
+    console.log('user disconnected');
+  });
 });
 
 http.listen(3000, function() {
