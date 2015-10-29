@@ -10,7 +10,6 @@ define(['eventbus','c'], function(eventbus,c) {
   var buttons = states.map(function(state) {
     var button = c('button', { class: 'ui button' }, state.name);
     button.onclick = function() {
-      console.log('koek', state.value);
       eventbus.emit('command', 'emcTaskSetState', ['execute', state.value]);
     };
     button.emcstate = state.value;
