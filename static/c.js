@@ -27,7 +27,7 @@ define([], function() {
   }
 
   c.button = function createButton(name, onclick) {
-    var button = c('button', { class: 'ui button' },name);
+    var button = c('button', { class: 'ui button' }, name);
     button.onclick = onclick;
     return button;
   };
