@@ -1,4 +1,4 @@
-define(['eventbus', 'c', 'socket', 'statusbox', 'preview', 'control_dpad', 'control_height', 'control_mode', 'control_state'], function(eventbus, c, socket, statusbox, preview, control_dpad, control_height, control_mode, control_state) {
+define(['eventbus', 'c', 'socket', 'statusbox', 'preview', 'control_dpad', 'control_height', 'control_mode', 'control_state', 'control_estop', 'control_power', 'control_mdi', 'control_home'], function(eventbus, c, socket, statusbox, preview, control_dpad, control_height, control_mode, control_state, control_estop, control_power, control_mdi, control_home) {
   function createButton(name, onclick) {
     var button = document.createElement('button');
     button.className = 'ui button';
@@ -26,34 +26,8 @@ define(['eventbus', 'c', 'socket', 'statusbox', 'preview', 'control_dpad', 'cont
   }
 
   var controlContainer = createContainer('Control', [
-    createButton('Home', function() {
-      execCommand('emcTaskSetMode', ['execute', 1]);
-
-      execCommand('emcAxisUnhome', [0]);
-      execCommand('emcAxisUnhome', [1]);
-      execCommand('emcAxisUnhome', [2]);
-
-      execCommand('emcAxisHome', [0]);
-      execCommand('emcAxisHome', [1]);
-      execCommand('emcAxisHome', [2]);
-    }),
-
     control_dpad, control_height
   ]);
-
-  var mdiContainer = (function() {
-    var mdiinput;
-    return createContainer('MDI', [
-      c('div', {class: 'ui input'}, [
-        mdiinput = c('input',{},[])
-      ]),
-      createButton('Execute', function() {
-        execCommand('emcTaskSetMode', ['execute', 3]);
-        execCommand('emcTaskPlanExecute', ['execute', mdiinput.value]);
-        mdiinput.value = '';
-      })
-    ]);
-  })();
 
   var programContainer = (function() {
     var pathinput;
@@ -79,8 +53,10 @@ define(['eventbus', 'c', 'socket', 'statusbox', 'preview', 'control_dpad', 'cont
     }
 
     return createContainer('Program', [
-      c.div({ class: 'ui input' }, [pathinput = c('input')]),
-      c.button('Open', onopen),
+      c.div({ class: 'ui action input' }, [
+        pathinput = c('input'),
+        c.button('Open', onopen)
+      ]),
       c.button('Init', oninit),
       c.button('Pause', onpause),
       c.button('Resume', onresume),
@@ -88,15 +64,25 @@ define(['eventbus', 'c', 'socket', 'statusbox', 'preview', 'control_dpad', 'cont
     ]);
   })();
 
+  function segment(name, children) {
+    return c('div', { class: 'ui raised segment' }, [
+      // c('a', { class: 'ui ribbon label' }, name)
+    ].concat(children));
+  }
 
-  var rootElement = c('div', {}, [
-    preview.element,
-    c.div({}, [control_mode]),
-    c.div({}, [control_state]),
+  var segments = c('div', { class: 'ui segments'}, [
+    segment('Preview', [preview.element]),
+    segment('Mode', [control_mode]),
+    segment('State', [control_estop, control_power]),
+    segment('Manual', [control_home]),
+    segment('MDI', [control_mdi]),
     controlContainer,
-    mdiContainer,
     programContainer,
     statusbox
+  ]);
+
+  var rootElement = c('div', { class: 'main ui container' }, [
+    segments
   ]);
 
   function onDomLoaded() {
