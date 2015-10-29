@@ -2,10 +2,10 @@ define(['eventbus'], function(eventbus) {
 
   // Initialize THREE
   var scene = new THREE.Scene();
-  scene.translateX(-65);
+  scene.rotateX(-Math.PI/2);
 
-  var camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.set(0, 0, 100);
+  var camera = new THREE.PerspectiveCamera(60, 800 / 600, 0.1, 1000);
+  camera.position.set(0, 0, 500);
 
 
   var renderer = new THREE.WebGLRenderer();
@@ -14,7 +14,7 @@ define(['eventbus'], function(eventbus) {
   var controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.25;
-  controls.enableZoom = false;
+  controls.enableZoom = true;
 
   // var controls = new THREE.FlyControls(camera, renderer.domElement);
   // controls.dragToLook = true;
