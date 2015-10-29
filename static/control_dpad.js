@@ -23,7 +23,7 @@ define(['eventbus'], function(eventbus) {
 
 
   dpad.addEventListener('mousedown', function(e) {
-    if (e.buttons === 1) {
+    if (e.button === 0) {
       mousedown = true;
       eventbus.emit('command', 'emcTaskSetMode', ['execute', 1]);
       velocity = getVelocity(e);
