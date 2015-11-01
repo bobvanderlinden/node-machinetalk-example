@@ -1,9 +1,10 @@
 {
   "name": "node-machinetalk-example",
   "version": "1.0.0",
-  "description": "",
+  "description": "An example webinterface using node-machinetalk.",
   "main": "index.js",
-  "author": "",
+  "author": "Bob van der Linden <bobvanderlinden@gmail.com>",
+  "repository": "bobvanderlinden/node-machinetalk-example",
   "license": "ISC",
   "dependencies": {
     "debug": "^2.2.0",
