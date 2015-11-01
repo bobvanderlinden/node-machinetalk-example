@@ -1,4 +1,6 @@
-define(['c', 'statusbox', 'preview',
+define(['c',
+  'controls/statusbox',
+  'controls/preview',
   'controls/dpad',
   'controls/height',
   'controls/mode',
