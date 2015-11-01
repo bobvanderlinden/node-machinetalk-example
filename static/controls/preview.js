@@ -1,7 +1,8 @@
 define(['eventbus',
   'controls/preview/axes',
-  'controls/preview/head'
-  ], function(eventbus,axes,head) {
+  'controls/preview/head',
+  'controls/preview/trace'
+  ], function(eventbus,axes,head,trace) {
   return function createPreviewControl(machine) {
     // Initialize THREE
     var scene = new THREE.Scene();
@@ -29,31 +30,8 @@ define(['eventbus',
 
     scene.add(axes(machine));
     scene.add(head(machine));
+    scene.add(trace(machine));
 
-    var traceMaxLength = 1000;
-    var traceGeometry = new THREE.BufferGeometry();
-    var tracePositions = new Float32Array(traceMaxLength * 3);
-    traceGeometry.addAttribute('position', new THREE.BufferAttribute(tracePositions, 3));
-    var traceLength = 2;
-    //traceGeometry.setDrawRange(0, traceLength);
-    traceGeometry.dynamic = true;
-
-    var traceMaterial = new THREE.LineBasicMaterial({
-      color: 0xffffff,
-      opacity: 1,
-      linewidth: 3
-    });
-    var traceLine = new THREE.Line(traceGeometry, traceMaterial);
-    scene.add(traceLine);
-
-    machine.on('status', function(status) {
-      tracePositions[traceLength * 3 + 0] = status.motion.position.x;
-      tracePositions[traceLength * 3 + 1] = status.motion.position.y;
-      tracePositions[traceLength * 3 + 2] = status.motion.position.z;
-      traceLength++;
-      traceGeometry.setDrawRange(0, traceLength);
-      traceLine.geometry.attributes.position.needsUpdate = true;
-    });
 
     function render() {
       requestAnimationFrame(render);
