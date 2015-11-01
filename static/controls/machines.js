@@ -30,7 +30,7 @@ define(['eventbus','c'], function(eventbus, c) {
       }
 
       onlineMachines.forEach(function(uuid) {
-        var machineElement = c('li', {class:'machine'}, uuid);
+        var machineElement = c('li', { class:'item machine'}, uuid);
         machineElement.classList.toggle('active', activeMachineUuid === uuid);
         machineElement.onclick = function() {
           setActiveMachine(uuid);
@@ -51,7 +51,7 @@ define(['eventbus','c'], function(eventbus, c) {
       updateDom();
     }
 
-    var root = c('ul', {class: 'machines'}, []);
+    var root = c('ul', {class: 'ui list machines'}, []);
     return root;
   };
 });
