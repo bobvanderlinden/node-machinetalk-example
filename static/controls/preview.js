@@ -8,10 +8,10 @@ define(['eventbus',
   return function createPreviewControl(machine) {
     // Initialize THREE
     var scene = new THREE.Scene();
-    scene.rotateX(-Math.PI/2);
 
     var camera = new THREE.PerspectiveCamera(60, 800 / 600, 0.1, 1000);
-    camera.position.set(0, 0, 500);
+    camera.up.set(0,0,1);
+    camera.position.set(200, 200, 200);
 
 
     var renderer = new THREE.WebGLRenderer();
