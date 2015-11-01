@@ -1,4 +1,7 @@
-define(['eventbus'], function(eventbus) {
+define(['eventbus',
+  'controls/preview/axes',
+  'controls/preview/head'
+  ], function(eventbus,axes,head) {
   return function createPreviewControl(machine) {
     // Initialize THREE
     var scene = new THREE.Scene();
@@ -24,42 +27,8 @@ define(['eventbus'], function(eventbus) {
       scene.add(light);
     }
 
-    function createAxis(vector, color) {
-      var geometry = new THREE.Geometry();
-      geometry.vertices.push(new THREE.Vector3(0,0,0));
-      geometry.vertices.push(vector.multiplyScalar(100));
-      var material = new THREE.LineBasicMaterial({
-        color: color,
-        opacity: 0.5,
-        linewidth: 1,
-        transparent: true
-      });
-      return new THREE.Line(geometry, material);
-    }
-
-    scene.add(createAxis(new THREE.Vector3(1, 0, 0), 0xff0000));
-    scene.add(createAxis(new THREE.Vector3(0, 1, 0), 0x00ff00));
-    scene.add(createAxis(new THREE.Vector3(0, 0, 1), 0x0000ff));
-
-    function createPhongMaterial(color) {
-      return new THREE.MeshPhongMaterial({
-        color: color,
-        emissive: 0x000000,
-        specular: 0x111111,
-        shininess: 30,
-        shading: THREE.FlatShading
-      });
-    }
-
-    var headGeometry = new THREE.CylinderGeometry(0, 2, 10, 32);
-    headGeometry.rotateX(-Math.PI / 2);
-    headGeometry.translate(0, 0, 5);
-    var head = new THREE.Mesh(
-      headGeometry,
-      createPhongMaterial(0xcccccc)
-    );
-    head.position.set(0, 0, 0);
-    scene.add(head);
+    scene.add(axes(machine));
+    scene.add(head(machine));
 
     var traceMaxLength = 1000;
     var traceGeometry = new THREE.BufferGeometry();
@@ -84,12 +53,6 @@ define(['eventbus'], function(eventbus) {
       traceLength++;
       traceGeometry.setDrawRange(0, traceLength);
       traceLine.geometry.attributes.position.needsUpdate = true;
-
-      head.position.set(
-        status.motion.position.x,
-        status.motion.position.y,
-        status.motion.position.z
-      );
     });
 
     function render() {
