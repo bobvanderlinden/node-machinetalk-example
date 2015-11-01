@@ -27,6 +27,23 @@ define(['eventbus'], function(eventbus) {
       scene.add(light);
     }
 
+    function createAxis(vector, color) {
+      var geometry = new THREE.Geometry();
+      geometry.vertices.push(new THREE.Vector3(0,0,0));
+      geometry.vertices.push(vector.multiplyScalar(100));
+      var material = new THREE.LineBasicMaterial({
+        color: color,
+        opacity: 0.5,
+        linewidth: 1,
+        transparent: true
+      });
+      return new THREE.Line(geometry, material);
+    }
+
+    scene.add(createAxis(new THREE.Vector3(1, 0, 0), 0xff0000));
+    scene.add(createAxis(new THREE.Vector3(0, 1, 0), 0x00ff00));
+    scene.add(createAxis(new THREE.Vector3(0, 0, 1), 0x0000ff));
+
     function createPhongMaterial(color) {
       return new THREE.MeshPhongMaterial({
         color: color,
@@ -36,13 +53,6 @@ define(['eventbus'], function(eventbus) {
         shading: THREE.FlatShading
       });
     }
-
-    var cube = new THREE.Mesh(
-      new THREE.BoxGeometry(5, 5, 5),
-      createPhongMaterial(0xffffff)
-    );
-
-    scene.add(cube);
 
     var headGeometry = new THREE.CylinderGeometry(0, 2, 10, 32);
     headGeometry.rotateX(-Math.PI / 2);
