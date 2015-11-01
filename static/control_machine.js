@@ -1,4 +1,28 @@
-define(['c', 'statusbox', 'preview', 'control_dpad', 'control_height', 'control_mode', 'control_state', 'control_estop', 'control_power', 'control_mdi', 'control_home'], function(c, statusbox, preview, control_dpad, control_height, control_mode, control_state, control_estop, control_power, control_mdi, control_home) {
+define(['c', 'statusbox', 'preview',
+  'control_dpad',
+  'control_height',
+  'control_mode',
+  'control_state',
+  'control_estop',
+  'control_power',
+  'control_mdi',
+  'control_home',
+  'control_program_open',
+  'control_program_run',
+  'control_program_pauseresume'],
+  function(c, statusbox, preview,
+    control_dpad,
+    control_height,
+    control_mode,
+    control_state,
+    control_estop,
+    control_power,
+    control_mdi,
+    control_home,
+    control_program_open,
+    control_program_run,
+    control_program_pauseresume
+    ) {
   return function createMachineControl(machine) {
     var controls = {
       preview: preview(machine),
@@ -9,7 +33,10 @@ define(['c', 'statusbox', 'preview', 'control_dpad', 'control_height', 'control_
       estop: control_estop(machine),
       power: control_power(machine),
       mdi: control_mdi(machine),
-      home: control_home(machine)
+      home: control_home(machine),
+      program_open: control_program_open(machine),
+      program_run: control_program_run(machine),
+      program_pauseresume: control_program_pauseresume(machine)
     };
 
     function createContainer(name, children) {
@@ -22,7 +49,7 @@ define(['c', 'statusbox', 'preview', 'control_dpad', 'control_height', 'control_
     }
 
     function execCommand(name, args) {
-      eventbus.emit('command', name, args);
+      machine.command(name, args);
     }
     function createCommandFn(name, args) {
       return function() {
@@ -33,41 +60,6 @@ define(['c', 'statusbox', 'preview', 'control_dpad', 'control_height', 'control_
     var controlContainer = createContainer('Control', [
       controls.dpad, controls.height
     ]);
-
-    var programContainer = (function() {
-      var pathinput;
-
-      function onopen() {
-        execCommand('emcTaskPlanOpen', ['execute', pathinput.value]);
-      }
-
-      function oninit() {
-        //execCommand('emcTaskPlanInit', ['execute']);
-      }
-
-      function onpause() {
-        execCommand('emcTaskPlanPause', ['execute']);
-      }
-
-      function onresume() {
-        execCommand('emcTaskPlanResume', ['execute']);
-      }
-
-      function onrun() {
-        execCommand('emcTaskPlanRun', ['execute',0]);
-      }
-
-      return createContainer('Program', [
-        c.div({ class: 'ui action input' }, [
-          pathinput = c('input'),
-          c.button('Open', onopen)
-        ]),
-        c.button('Init', oninit),
-        c.button('Pause', onpause),
-        c.button('Resume', onresume),
-        c.button('Run', onrun)
-      ]);
-    })();
 
     function segment(name, children) {
       return c('div', { class: 'ui raised segment' }, [
@@ -81,8 +73,8 @@ define(['c', 'statusbox', 'preview', 'control_dpad', 'control_height', 'control_
       segment('State', [controls.estop, controls.power]),
       segment('Manual', [controls.home]),
       segment('MDI', [controls.mdi]),
+      segment('Program', [controls.program_open, controls.program_run, controls.program_pauseresume]),
       controlContainer,
-      programContainer,
       statusbox
     ]);
   };
