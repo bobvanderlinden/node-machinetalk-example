@@ -1,60 +1,62 @@
 define(['eventbus'], function(eventbus) {
-  var dpad = document.createElement('div');
-  dpad.className = 'control dpad';
-  dpad.style.width ='100px';
-  dpad.style.height ='100px';
+  return function createDPadControl(machineUuid) {
+    var dpad = document.createElement('div');
+    dpad.className = 'control dpad';
+    dpad.style.width ='100px';
+    dpad.style.height ='100px';
 
 
-  var interval;
-  var velocity;
-  var mousedown = false;
+    var interval;
+    var velocity;
+    var mousedown = false;
 
-  function getVelocity(e) {
-    var x = e.pageX - $(dpad).offset().left - $(dpad).scrollLeft();
-    var y = e.pageY - $(dpad).offset().top - $(dpad).scrollTop();
-    var w = $(dpad).width();
-    var h = $(dpad).height();
+    function getVelocity(e) {
+      var x = e.pageX - $(dpad).offset().left - $(dpad).scrollLeft();
+      var y = e.pageY - $(dpad).offset().top - $(dpad).scrollTop();
+      var w = $(dpad).width();
+      var h = $(dpad).height();
 
-    return [
-      (x/w - 0.5) * 100,
-      -(y/h - 0.5) * 100
-    ];
-  }
+      return [
+        (x/w - 0.5) * 100,
+        -(y/h - 0.5) * 100
+      ];
+    }
 
 
-  dpad.addEventListener('mousedown', function(e) {
-    if (e.button === 0) {
-      mousedown = true;
-      eventbus.emit('command', 'emcTaskSetMode', ['execute', 1]);
-      velocity = getVelocity(e);
+    dpad.addEventListener('mousedown', function(e) {
+      if (e.button === 0) {
+        mousedown = true;
+        eventbus.emit('command', 'emcTaskSetMode', ['execute', 1]);
+        velocity = getVelocity(e);
 
-      document.addEventListener('mouseup', onmouseup);
+        document.addEventListener('mouseup', onmouseup);
 
+        clearInterval(interval);
+        interval = setInterval(ontick, 100);
+      }
+    });
+    dpad.addEventListener('mousemove', function(e) {
+      if (mousedown) {
+        velocity = getVelocity(e);
+      }
+    });
+
+    function onmouseup(e) {
+      document.removeEventListener('mouseup', onmouseup);
       clearInterval(interval);
-      interval = setInterval(ontick, 100);
+      jog([0,0]);
     }
-  });
-  dpad.addEventListener('mousemove', function(e) {
-    if (mousedown) {
-      velocity = getVelocity(e);
+
+    function ontick() {
+      jog(velocity);
     }
-  });
 
-  function onmouseup(e) {
-    document.removeEventListener('mouseup', onmouseup);
-    clearInterval(interval);
-    jog([0,0]);
-  }
-
-  function ontick() {
-    jog(velocity);
-  }
-
-  function jog(velocity) {
-    var x = velocity[0];
-    var y = velocity[1];
-    eventbus.emit('command', 'emcAxisJog', [0, x]);
-    eventbus.emit('command', 'emcAxisJog', [1, y]);
-  }
-  return dpad;
+    function jog(velocity) {
+      var x = velocity[0];
+      var y = velocity[1];
+      eventbus.emit('command', 'emcAxisJog', [0, x]);
+      eventbus.emit('command', 'emcAxisJog', [1, y]);
+    }
+    return dpad;
+  };
 });

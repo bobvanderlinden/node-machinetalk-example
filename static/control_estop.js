@@ -1,20 +1,23 @@
 define(['eventbus','c'], function(eventbus,c) {
-  var taskState;
-  var active;
+  return function createEstopControl(machine) {
+    var taskState;
+    var active;
 
-  var estopButton = c.button('Estop', function() {
-    if (active) {
-      eventbus.emit('command', 'emcTaskSetState', ['execute', 2]);
-    } else {
-      eventbus.emit('command', 'emcTaskSetState', ['execute', 1]);
-    }
-  });
-  eventbus.on('status', function(status) {
-    if (taskState !== status.task.task_state) {
-      taskState = status.task.task_state;
-      active = taskState === 1;
-      estopButton.classList.toggle('active', active);
-    }
-  });
-  return estopButton;
+    var estopButton = c.button('Estop', function() {
+      if (active) {
+        machine.command('emcTaskSetState', ['execute', 2]);
+      } else {
+        machine.command('emcTaskSetState', ['execute', 1]);
+      }
+    });
+    machine.on('status', function(status) {
+      var newTaskState = status.task && status.task.task_state;
+      if (taskState !== newTaskState) {
+        taskState = newTaskState;
+        active = taskState === 1;
+        estopButton.classList.toggle('active', active);
+      }
+    });
+    return estopButton;
+  };
 });

@@ -1,89 +1,61 @@
-define(['eventbus', 'c', 'socket', 'statusbox', 'preview', 'control_dpad', 'control_height', 'control_mode', 'control_state', 'control_estop', 'control_power', 'control_mdi', 'control_home'], function(eventbus, c, socket, statusbox, preview, control_dpad, control_height, control_mode, control_state, control_estop, control_power, control_mdi, control_home) {
-  function createButton(name, onclick) {
-    var button = document.createElement('button');
-    button.className = 'ui button';
-    button.textContent = name;
-    button.onclick = onclick;
-    return button;
+define(['eventbus', 'c', 'eventemitter', 'control_machines', 'control_machine'], function(eventbus, c, EventEmitter, control_machines, control_machine) {
+  function Machine(uuid) {
+    this.uuid = uuid;
+    EventEmitter.call(this);
+  }
+  Machine.prototype = new EventEmitter();
+  Machine.prototype.command = function(/*...*/) {
+    var args = Array.prototype.slice.call(arguments, 0);
+    console.log(args);
+    console.log(['machine:command', this.uuid].concat(args));
+    eventbus.emit.apply(eventbus, ['machine:command', this.uuid].concat(args));
+  };
+
+  var machines = {};
+  function getMachine(uuid) {
+    var machine = machines[uuid];
+    if (!machine) {
+      machine = machines[uuid] = new Machine(uuid);
+    }
+    return machine;
   }
 
-  function createContainer(name, children) {
-    var container = document.createElement('div');
-    container.className = 'ui message';
-    children.forEach(function(child) {
-      container.appendChild(child);
-    });
-    return container;
-  }
+  eventbus.on('machine:online', function(uuid) {
+    getMachine(uuid).emit('online');
+  });
+  eventbus.on('machine:offline', function(uuid) {
+    getMachine(uuid).emit('offline');
+  });
+  eventbus.on('machine:status', function(uuid, status) {
+    console.log('machine:status', uuid, status);
+    getMachine(uuid).emit('status', status);
+  });
 
-  function execCommand(name, args) {
-    eventbus.emit('command', name, args);
-  }
-  function createCommandFn(name, args) {
-    return function() {
-      return execCommand(name, args);
-    };
-  }
-
-  var controlContainer = createContainer('Control', [
-    control_dpad, control_height
-  ]);
-
-  var programContainer = (function() {
-    var pathinput;
-
-    function onopen() {
-      execCommand('emcTaskPlanOpen', ['execute', pathinput.value]);
+  var activeMachine = null;
+  eventbus.on('machine:active', function(uuid) {
+    if (activeMachine) {
+      activeMachine.emit('inactive');
     }
+    activeMachine = uuid && getMachine(uuid);
 
-    function oninit() {
-      //execCommand('emcTaskPlanInit', ['execute']);
+    while (machineContainer.firstChild) {
+        machineContainer.removeChild(machineContainer.firstChild);
     }
-
-    function onpause() {
-      execCommand('emcTaskPlanPause', ['execute']);
+    if (activeMachine) {
+      machineContainer.appendChild(control_machine(activeMachine));
+      activeMachine.emit('active');
     }
+  });
 
-    function onresume() {
-      execCommand('emcTaskPlanResume', ['execute']);
-    }
 
-    function onrun() {
-      execCommand('emcTaskPlanRun', ['execute',0]);
-    }
-
-    return createContainer('Program', [
-      c.div({ class: 'ui action input' }, [
-        pathinput = c('input'),
-        c.button('Open', onopen)
-      ]),
-      c.button('Init', oninit),
-      c.button('Pause', onpause),
-      c.button('Resume', onresume),
-      c.button('Run', onrun)
-    ]);
-  })();
-
-  function segment(name, children) {
-    return c('div', { class: 'ui raised segment' }, [
-      // c('a', { class: 'ui ribbon label' }, name)
-    ].concat(children));
-  }
-
-  var segments = c('div', { class: 'ui segments'}, [
-    segment('Preview', [preview.element]),
-    segment('Mode', [control_mode]),
-    segment('State', [control_estop, control_power]),
-    segment('Manual', [control_home]),
-    segment('MDI', [control_mdi]),
-    controlContainer,
-    programContainer,
-    statusbox
-  ]);
+  var machineContainer = c('div', { class: 'machinecontainer' }, []);
 
   var rootElement = c('div', { class: 'main ui container' }, [
-    segments
+    control_machines(),
+    machineContainer
   ]);
+
+  require(['socket']);
 
   function onDomLoaded() {
     console.log(typeof rootElement);

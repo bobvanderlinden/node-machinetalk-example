@@ -1,26 +1,28 @@
 define(['eventbus','c'], function(eventbus, c) {
-  var homeButton = c('button', { class: 'ui button' }, 'Home');
-  homeButton.onclick = function() {
-    eventbus.emit('command', 'emcTaskSetMode', ['execute', 1]);
+  return function createHomeControl(machine) {
+    var homeButton = c('button', { class: 'ui button' }, 'Home');
+    homeButton.onclick = function() {
+      machine.command('emcTaskSetMode', ['execute', 1]);
 
-    eventbus.emit('command', 'emcAxisUnhome', [0]);
-    eventbus.emit('command', 'emcAxisUnhome', [1]);
-    eventbus.emit('command', 'emcAxisUnhome', [2]);
-    eventbus.emit('command', 'emcAxisUnhome', [3]);
+      machine.command('emcAxisUnhome', [0]);
+      machine.command('emcAxisUnhome', [1]);
+      machine.command('emcAxisUnhome', [2]);
+      machine.command('emcAxisUnhome', [3]);
 
-    eventbus.emit('command', 'emcAxisHome', [0]);
-    eventbus.emit('command', 'emcAxisHome', [1]);
-    eventbus.emit('command', 'emcAxisHome', [2]);
-    eventbus.emit('command', 'emcAxisHome', [3]);
-  };
+      machine.command('emcAxisHome', [0]);
+      machine.command('emcAxisHome', [1]);
+      machine.command('emcAxisHome', [2]);
+      machine.command('emcAxisHome', [3]);
+    };
 
-  eventbus.on('status',function(status) {
-    var homed = status.motion.axis.every(function(axis) {
-      return axis.homed;
+    machine.on('status',function(status) {
+      var homed = status.motion.axis.every(function(axis) {
+        return axis.homed;
+      });
+      homeButton.classList.toggle('active', !homed);
+      homeButton.classList.toggle('primary', !homed);
     });
-    homeButton.classList.toggle('active', !homed);
-    homeButton.classList.toggle('primary', !homed);
-  });
 
-  return homeButton;
+    return homeButton;
+  };
 });
