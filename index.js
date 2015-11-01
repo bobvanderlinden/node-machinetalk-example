@@ -9,7 +9,7 @@ var io = require('socket.io')(http);
 
 app.use(express.static(__dirname + '/static'));
 
-var requiredServices = ['status', 'command', 'error'];
+var requiredServices = ['status', 'command', 'error', 'preview'];
 
 function Machine(uuid) {
   this.uuid = uuid;
@@ -85,6 +85,7 @@ Machine.prototype.connect = function() {
   this._initializeCommand(this.services.command);
   this._initializeStatus(this.services.status);
   this._initializeError(this.services.error);
+  this._initializePreview(this.services.preview);
   this.isConnected = true;
 };
 Machine.prototype.disconnect = function() {
@@ -94,9 +95,11 @@ Machine.prototype.disconnect = function() {
   // this.clients.command.close();
   this.clients.status.close();
   this.clients.error.close();
+  this.clients.preview.close();
   this.clients.command = undefined;
   this.clients.status = undefined;
   this.clients.error = undefined;
+  this.clients.preview = undefined;
   isConnected = false;
 };
 Machine.prototype._initializeStatus = function(dsn) {
@@ -152,6 +155,17 @@ Machine.prototype._handleText = function(type, message) {
   });
 };
 
+Machine.prototype._initializePreview = function(dsn) {
+  var previewclient = this.clients.preview = new machinetalk.PreviewClient(this.services.preview);
+  previewclient.on('preview', this._handlePreview.bind(this));
+  previewclient.connect();
+};
+Machine.prototype._handlePreview = function(preview) {
+  var me = this;
+  me.subscriptions.forEach(function(subscription) {
+    subscription.emit('machine:preview', me.uuid, preview);
+  });
+};
 
 var machines = {};
 

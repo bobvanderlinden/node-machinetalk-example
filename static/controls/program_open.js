@@ -5,6 +5,8 @@ define(['c'], function(c) {
     function onopen() {
       machine.command('emcTaskSetMode', ['execute', 2]);
       machine.command('emcTaskPlanOpen', ['execute', pathinput.value]);
+      machine.command('emcTaskPlanOpen', ['preview', pathinput.value]);
+      machine.command('emcTaskPlanRun', ['preview', 0]);
     }
 
     return c.div({ class: 'ui action input' }, [

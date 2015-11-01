@@ -2,8 +2,9 @@ define(['eventbus',
   'controls/preview/axes',
   'controls/preview/head',
   'controls/preview/trace',
-  'controls/preview/boundingbox'
-  ], function(eventbus,axes,head,trace,boundingbox) {
+  'controls/preview/boundingbox',
+  'controls/preview/preview'
+  ], function(eventbus,axes,head,trace,boundingbox, preview) {
   return function createPreviewControl(machine) {
     // Initialize THREE
     var scene = new THREE.Scene();
@@ -33,6 +34,7 @@ define(['eventbus',
     scene.add(head(machine));
     scene.add(trace(machine));
     scene.add(boundingbox(machine));
+    scene.add(preview(machine));
 
 
     function render() {

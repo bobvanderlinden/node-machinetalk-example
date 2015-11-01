@@ -42,6 +42,9 @@ define(['eventbus', 'c', 'eventemitter', 'controls/machines', 'controls/machine'
     console.log('machine:text', uuid, type, text);
     getMachine(uuid).emit('text', type, text);
   });
+  eventbus.on('machine:preview', function(uuid, preview) {
+    getMachine(uuid).emit('preview', preview);
+  });
 
   var activeMachine = null;
   eventbus.on('machine:active', function(uuid) {
