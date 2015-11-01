@@ -14,7 +14,8 @@ define([], function() {
       linewidth: 3
     });
     var traceLine = new THREE.Line(traceGeometry, traceMaterial);
-    
+    traceLine.frustumCulled = false;
+
     machine.on('status', function(status) {
       tracePositions[traceLength * 3 + 0] = status.motion.position.x;
       tracePositions[traceLength * 3 + 1] = status.motion.position.y;
