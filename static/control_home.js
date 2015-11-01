@@ -1,24 +1,24 @@
 define(['eventbus','c'], function(eventbus, c) {
   return function createHomeControl(machine) {
     var homeButton = c('button', { class: 'ui button' }, 'Home');
+    var axesCount = 0;
     homeButton.onclick = function() {
       machine.command('emcTaskSetMode', ['execute', 1]);
 
-      machine.command('emcAxisUnhome', [0]);
-      machine.command('emcAxisUnhome', [1]);
-      machine.command('emcAxisUnhome', [2]);
-      machine.command('emcAxisUnhome', [3]);
+      for(var i=0;i<axesCount;i++) {
+        machine.command('emcAxisUnhome', [i]);
+      }
 
-      machine.command('emcAxisHome', [0]);
-      machine.command('emcAxisHome', [1]);
-      machine.command('emcAxisHome', [2]);
-      machine.command('emcAxisHome', [3]);
+      for(var i=0;i<axesCount;i++) {
+        machine.command('emcAxisHome', [i]);
+      }
     };
 
     machine.on('status',function(status) {
       var homed = status.motion.axis.every(function(axis) {
         return axis.homed;
       });
+      axesCount = status.motion.axis.length;
       homeButton.classList.toggle('active', !homed);
       homeButton.classList.toggle('primary', !homed);
     });
