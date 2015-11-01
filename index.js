@@ -104,6 +104,7 @@ Machine.prototype._initializeStatus = function(dsn) {
   statusclient.subscribe('motion');
   statusclient.subscribe('io');
   statusclient.subscribe('interp');
+  statusclient.subscribe('config');
   statusclient.connect();
 };
 Machine.prototype._handleStatus = function(status) {
