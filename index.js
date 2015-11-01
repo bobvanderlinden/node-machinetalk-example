@@ -89,7 +89,8 @@ Machine.prototype.connect = function() {
 Machine.prototype.disconnect = function() {
   if (!this.isConnected) { return; }
   debug('Machine ' + this.uuid + ' disconnect');
-  this.clients.command.close();
+  // TODO: Close command client when this is supported by node-machinetalk
+  // this.clients.command.close();
   this.clients.status.close();
   this.clients.command = undefined;
   this.clients.status = undefined;
