@@ -16,9 +16,6 @@ define(['eventbus'], function(eventbus) {
     controls.dampingFactor = 0.25;
     controls.enableZoom = true;
 
-    // var controls = new THREE.FlyControls(camera, renderer.domElement);
-    // controls.dragToLook = true;
-
     var light = new THREE.AmbientLight(0x404040);
     scene.add(light);
     for(var i=0;i<5;i++) {
