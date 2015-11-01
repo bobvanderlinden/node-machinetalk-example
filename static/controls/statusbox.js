@@ -1,9 +1,23 @@
-define(['eventbus'], function(eventbus) {
+define(['eventbus','c'], function(eventbus,c) {
   return function createStatusBox(machine) {
-    var statusBox = document.createElement('pre');
-    machine.on('status', function(status) {
-      statusBox.textContent = JSON.stringify(status, '  ', '  ');
+    var status;
+    var statusContainer = c.div();
+
+    machine.on('status', function(newStatus) {
+      status = newStatus;
     });
-    return statusBox;
+
+    function onrefresh() {
+      while (statusContainer.firstChild) {
+        statusContainer.removeChild(statusContainer.firstChild);
+      }
+
+      statusContainer.appendChild(renderjson(status));
+    }
+
+    return c.div({ class:'statusbox' }, [
+      c.button('Refresh', onrefresh),
+      statusContainer
+    ]);
   };
 });
