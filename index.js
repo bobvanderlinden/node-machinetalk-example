@@ -50,6 +50,7 @@ Machine.prototype._updateIsOnline = function() {
 Machine.prototype._handleOnline = function() {
   debug('Machine ' + this.uuid + ' online');
   this.emit('online');
+  io.emit('machine:online', this.uuid);
   if (this.hasSubscriptions()) {
     this.connect();
   }
