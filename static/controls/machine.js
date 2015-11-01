@@ -12,7 +12,9 @@ define(['c',
   'controls/program_open',
   'controls/program_run',
   'controls/program_pauseresume'],
-  function(c, statusbox, preview,
+  function(c,
+    statusbox,
+    preview,
     control_dpad,
     control_height,
     control_mode,
@@ -38,7 +40,8 @@ define(['c',
       home: control_home(machine),
       program_open: control_program_open(machine),
       program_run: control_program_run(machine),
-      program_pauseresume: control_program_pauseresume(machine)
+      program_pauseresume: control_program_pauseresume(machine),
+      statusbox: statusbox(machine)
     };
 
     function segment(name, children) {
@@ -54,7 +57,7 @@ define(['c',
       segment('Manual', [controls.home]),
       segment('MDI', [controls.mdi]),
       segment('Program', [controls.program_open, controls.program_run, controls.program_pauseresume]),
-      statusbox
+      segment('Status', [controls.statusbox])
     ]);
   };
 });

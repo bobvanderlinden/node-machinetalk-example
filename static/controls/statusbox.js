@@ -1,7 +1,9 @@
 define(['eventbus'], function(eventbus) {
-  var statusBox = document.createElement('pre');
-  eventbus.on('status', function(status) {
-    statusBox.textContent = JSON.stringify(status, '  ', '  ');
-  });
-  return statusBox;
+  return function createStatusBox(machine) {
+    var statusBox = document.createElement('pre');
+    machine.on('status', function(status) {
+      statusBox.textContent = JSON.stringify(status, '  ', '  ');
+    });
+    return statusBox;
+  };
 });
