@@ -1,4 +1,4 @@
-define(['eventbus', 'c', 'eventemitter', 'control_machines', 'control_machine'], function(eventbus, c, EventEmitter, control_machines, control_machine) {
+define(['eventbus', 'c', 'eventemitter', 'controls/machines', 'controls/machine'], function(eventbus, c, EventEmitter, control_machines, control_machine) {
   function Machine(uuid) {
     this.uuid = uuid;
     EventEmitter.call(this);
