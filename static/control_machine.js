@@ -39,28 +39,6 @@ define(['c', 'statusbox', 'preview',
       program_pauseresume: control_program_pauseresume(machine)
     };
 
-    function createContainer(name, children) {
-      var container = document.createElement('div');
-      container.className = 'ui message';
-      children.forEach(function(child) {
-        container.appendChild(child);
-      });
-      return container;
-    }
-
-    function execCommand(name, args) {
-      machine.command(name, args);
-    }
-    function createCommandFn(name, args) {
-      return function() {
-        return execCommand(name, args);
-      };
-    }
-
-    var controlContainer = createContainer('Control', [
-      controls.dpad, controls.height
-    ]);
-
     function segment(name, children) {
       return c('div', { class: 'ui raised segment' }, [
         // c('a', { class: 'ui ribbon label' }, name)
@@ -74,7 +52,6 @@ define(['c', 'statusbox', 'preview',
       segment('Manual', [controls.home]),
       segment('MDI', [controls.mdi]),
       segment('Program', [controls.program_open, controls.program_run, controls.program_pauseresume]),
-      controlContainer,
       statusbox
     ]);
   };
