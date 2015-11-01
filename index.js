@@ -84,6 +84,7 @@ Machine.prototype.connect = function() {
   debug('Machine ' + this.uuid + ' connect');
   this._initializeCommand(this.services.command);
   this._initializeStatus(this.services.status);
+  this._initializeError(this.services.error);
   this.isConnected = true;
 };
 Machine.prototype.disconnect = function() {
@@ -92,8 +93,10 @@ Machine.prototype.disconnect = function() {
   // TODO: Close command client when this is supported by node-machinetalk
   // this.clients.command.close();
   this.clients.status.close();
+  this.clients.error.close();
   this.clients.command = undefined;
   this.clients.status = undefined;
+  this.clients.error = undefined;
   isConnected = false;
 };
 Machine.prototype._initializeStatus = function(dsn) {
@@ -124,7 +127,35 @@ Machine.prototype._handleCommand = function(commandName, args) {
   commandclient[commandName].apply(commandclient, args);
 };
 
-
+Machine.prototype._initializeError = function(dsn) {
+  console.log('connecting to', this.services.error);
+  var errorclient = this.clients.error = new machinetalk.ErrorClient(this.services.error);
+  errorclient.on('message:error', this._handleError.bind(this));
+  errorclient.on('message:display', this._handleDisplay.bind(this));
+  errorclient.on('message:text', this._handleText.bind(this));
+  errorclient.connect();
+};
+Machine.prototype._handleError = function(message) {
+  var me = this;
+  console.log('error', message);
+  me.subscriptions.forEach(function(subscription) {
+    subscription.emit('machine:error', me.uuid, message);
+  });
+};
+Machine.prototype._handleDisplay = function(message) {
+  var me = this;
+  console.log('display', message);
+  me.subscriptions.forEach(function(subscription) {
+    subscription.emit('machine:display', me.uuid, message);
+  });
+};
+Machine.prototype._handleText = function(type, message) {
+  var me = this;
+  console.log('text', type, message);
+  me.subscriptions.forEach(function(subscription) {
+    subscription.emit('machine:text', me.uuid, type, message);
+  });
+};
 
 
 var machines = {};

@@ -30,6 +30,18 @@ define(['eventbus', 'c', 'eventemitter', 'controls/machines', 'controls/machine'
     console.log('machine:status', uuid, status);
     getMachine(uuid).emit('status', status);
   });
+  eventbus.on('machine:error', function(uuid, type, error) {
+    console.log('machine:error', uuid, type, error);
+    getMachine(uuid).emit('error', type, error);
+  });
+  eventbus.on('machine:display', function(uuid, type, display) {
+    console.log('machine:display', uuid, type, display);
+    getMachine(uuid).emit('display', type, display);
+  });
+  eventbus.on('machine:text', function(uuid, type, text) {
+    console.log('machine:text', uuid, type, text);
+    getMachine(uuid).emit('text', type, text);
+  });
 
   var activeMachine = null;
   eventbus.on('machine:active', function(uuid) {

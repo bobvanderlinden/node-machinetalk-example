@@ -1,5 +1,6 @@
 define(['c',
   'controls/statusbox',
+  'controls/messagelist',
   'controls/preview',
   'controls/dpad',
   'controls/height',
@@ -14,6 +15,7 @@ define(['c',
   'controls/program_pauseresume'],
   function(c,
     statusbox,
+    messagelist,
     preview,
     control_dpad,
     control_height,
@@ -41,7 +43,8 @@ define(['c',
       program_open: control_program_open(machine),
       program_run: control_program_run(machine),
       program_pauseresume: control_program_pauseresume(machine),
-      statusbox: statusbox(machine)
+      statusbox: statusbox(machine),
+      messagelist: messagelist(machine)
     };
 
     function segment(name, children) {
@@ -51,6 +54,7 @@ define(['c',
     }
 
     return c('div', { class: 'ui segments'}, [
+      segment('Messages', controls.messagelist),
       segment('Preview', [controls.preview]),
       segment('Mode', [controls.mode]),
       segment('State', [controls.estop, controls.power]),
