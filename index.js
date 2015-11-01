@@ -100,7 +100,6 @@ Machine.prototype.disconnect = function() {
   isConnected = false;
 };
 Machine.prototype._initializeStatus = function(dsn) {
-  console.log('connecting to', this.services.status);
   var statusclient = this.clients.status = new machinetalk.StatusClient(this.services.status);
   statusclient.on('statuschanged', this._handleStatus.bind(this));
   statusclient.subscribe('task');
@@ -128,7 +127,6 @@ Machine.prototype._handleCommand = function(commandName, args) {
 };
 
 Machine.prototype._initializeError = function(dsn) {
-  console.log('connecting to', this.services.error);
   var errorclient = this.clients.error = new machinetalk.ErrorClient(this.services.error);
   errorclient.on('message:error', this._handleError.bind(this));
   errorclient.on('message:display', this._handleDisplay.bind(this));
@@ -137,21 +135,18 @@ Machine.prototype._initializeError = function(dsn) {
 };
 Machine.prototype._handleError = function(message) {
   var me = this;
-  console.log('error', message);
   me.subscriptions.forEach(function(subscription) {
     subscription.emit('machine:error', me.uuid, message);
   });
 };
 Machine.prototype._handleDisplay = function(message) {
   var me = this;
-  console.log('display', message);
   me.subscriptions.forEach(function(subscription) {
     subscription.emit('machine:display', me.uuid, message);
   });
 };
 Machine.prototype._handleText = function(type, message) {
   var me = this;
-  console.log('text', type, message);
   me.subscriptions.forEach(function(subscription) {
     subscription.emit('machine:text', me.uuid, type, message);
   });
