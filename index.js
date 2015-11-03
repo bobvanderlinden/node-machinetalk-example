@@ -49,14 +49,26 @@ Machine.prototype._updateIsOnline = function() {
 
 Machine.prototype._handleOnline = function() {
   debug('Machine ' + this.uuid + ' online');
+
   this.emit('online');
+  io.emit('machine:online', {
+    uuid: this.uuid,
+    host: this.host
+  });
+
   if (this.hasSubscriptions()) {
     this.connect();
   }
 };
 Machine.prototype._handleOffline = function() {
   debug('Machine ' + this.uuid + ' offline');
+
   this.emit('offline');
+  io.emit('machine:offline', {
+    uuid: this.uuid,
+    host: this.host
+  });
+
   this.disconnect();
 };
 
