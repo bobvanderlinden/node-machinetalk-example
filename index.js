@@ -189,6 +189,7 @@ function getMachines() {
 var browser = new machinetalk.MachineTalkBrowser();
 browser.on('serviceUp', onMachineServiceUp);
 browser.on('serviceDown', onMachineServiceDown);
+browser.on('error', onBrowserError);
 browser.start();
 
 function onMachineServiceUp(service) {
@@ -199,6 +200,10 @@ function onMachineServiceUp(service) {
 
 function onMachineServiceDown(service) {
   getMachine(service.machine.uuid)._handleServiceDown(service.name);
+}
+
+function onBrowserError(err) {
+  console.error('Browser error', err);
 }
 
 
