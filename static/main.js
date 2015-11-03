@@ -20,11 +20,13 @@ define(['eventbus', 'c', 'eventemitter', 'controls/machines', 'controls/machine'
     return machine;
   }
 
-  eventbus.on('machine:online', function(uuid) {
-    getMachine(uuid).emit('online');
+  eventbus.on('machine:online', function(machineDescription) {
+    var machine = getMachine(machineDescription.uuid);
+    machine.host = machineDescription.host;
+    machine.emit('online');
   });
-  eventbus.on('machine:offline', function(uuid) {
-    getMachine(uuid).emit('offline');
+  eventbus.on('machine:offline', function(machineDescription) {
+    getMachine(machineDescription.uuid).emit('offline');
   });
   eventbus.on('machine:status', function(uuid, status) {
     console.log('machine:status', uuid, status);

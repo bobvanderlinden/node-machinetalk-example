@@ -191,12 +191,14 @@ browser.on('serviceUp', onMachineServiceUp);
 browser.on('serviceDown', onMachineServiceDown);
 browser.start();
 
-function onMachineServiceUp(machine, serviceName, dsn) {
-  getMachine(machine.uuid)._handleServiceUp(serviceName, dsn);
+function onMachineServiceUp(service) {
+  var machine = getMachine(service.machine.uuid);
+  machine.host = service.machine.host;
+  machine._handleServiceUp(service.name, service.dsn);
 }
 
-function onMachineServiceDown(machine, serviceName) {
-  getMachine(machine.uuid)._handleServiceDown(serviceName, dsn);
+function onMachineServiceDown(service) {
+  getMachine(service.machine.uuid)._handleServiceDown(service.name);
 }
 
 
@@ -210,7 +212,10 @@ io.on('connection', function(socket) {
 
   debug('Emitting ' + getMachines().length + ' machines to socket');
   getMachines().forEach(function(machine) {
-    socket.emit(machine.isOnline ? 'machine:online' : 'machine:offline', machine.uuid);
+    socket.emit(machine.isOnline ? 'machine:online' : 'machine:offline', {
+      uuid: machine.uuid,
+      host: machine.host
+    });
   });
 
   socket.on('machine:subscribe', function(uuid) {
