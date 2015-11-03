@@ -188,6 +188,7 @@ function getMachines() {
 
 var browser = new machinetalk.MachineTalkBrowser();
 browser.on('serviceUp', onMachineServiceUp);
+browser.on('serviceDown', onMachineServiceDown);
 browser.start();
 
 function onMachineServiceUp(machine, serviceName, dsn) {
