@@ -114,7 +114,7 @@ Machine.prototype.disconnect = function() {
   this.clients.status = undefined;
   this.clients.error = undefined;
   this.clients.preview = undefined;
-  isConnected = false;
+  this.isConnected = false;
 };
 Machine.prototype._initializeStatus = function(dsn) {
   var statusclient = this.clients.status = new machinetalk.StatusClient(this.services.status);
