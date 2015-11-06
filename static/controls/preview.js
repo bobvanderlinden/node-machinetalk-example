@@ -14,7 +14,9 @@ define(['eventbus',
     camera.position.set(200, -200, 200);
 
 
-    var renderer = new THREE.WebGLRenderer();
+    var renderer = new THREE.WebGLRenderer({
+      antialias: true
+    });
     renderer.setSize(1, 1);
 
     var controls = new THREE.OrbitControls(camera, renderer.domElement);
