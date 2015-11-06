@@ -11,7 +11,7 @@ define(['eventbus',
 
     var camera = new THREE.PerspectiveCamera(60, 800 / 600, 0.1, 1000);
     camera.up.set(0,0,1);
-    camera.position.set(200, 200, 200);
+    camera.position.set(200, -200, 200);
 
 
     var renderer = new THREE.WebGLRenderer();
