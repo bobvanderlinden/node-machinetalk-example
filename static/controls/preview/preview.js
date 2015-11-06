@@ -67,9 +67,9 @@ define(['c'], function(c) {
           case PreviewOp.STRAIGHT_TRAVERSE:
             // HACK: This converts inches to mm.
             // TODO: Figure out where units for previews are exposed.
-            preview[i].pos.x *= 25.4;
-            preview[i].pos.y *= 25.4;
-            preview[i].pos.z *= 25.4;
+            // preview[i].pos.x *= 25.4;
+            // preview[i].pos.y *= 25.4;
+            // preview[i].pos.z *= 25.4;
 
             processPathStraight(item);
             break;
