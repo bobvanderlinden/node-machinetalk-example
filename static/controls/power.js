@@ -3,7 +3,7 @@ define(['eventbus','c'], function(eventbus,c) {
     var taskState;
     var active;
 
-    var estopButton = c.button('Power', function() {
+    var powerButton = c.button('Power', function() {
       if (active) {
         machine.command('emcTaskSetState', ['execute', 3]);
       } else {
@@ -15,9 +15,9 @@ define(['eventbus','c'], function(eventbus,c) {
       if (taskState !== newTaskState) {
         taskState = newTaskState;
         active = taskState === 4;
-        estopButton.classList.toggle('active', active);
+        powerButton.classList.toggle('active', active);
       }
     });
-    return estopButton;
+    return powerButton;
   };
 });
