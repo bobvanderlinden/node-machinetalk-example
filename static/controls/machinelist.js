@@ -9,13 +9,18 @@ define(['eventbus','c'], function(eventbus, c) {
       updateDom();
     });
 
-    eventbus.on('machine:online', function(uuid) {
+    eventbus.on('machine:online', function(machineDescription) {
       console.log('machine online');
-      onlineMachines.push(uuid);
+      onlineMachines.push(machineDescription);
       updateDom();
     });
-    eventbus.on('machine:offline', function(uuid) {
-      onlineMachines.splice(onlineMachines.indexOf(uuid), 1);
+    eventbus.on('machine:offline', function(machineDescription) {
+      for(var i=0;i<onlineMachines.length;i++) {
+        if (onlineMachines[i].uuid === machineDescription.uuid) {
+          break;
+        }
+      }
+      onlineMachines.splice(i, 1);
       updateDom();
     });
 
@@ -29,11 +34,11 @@ define(['eventbus','c'], function(eventbus, c) {
         root.removeChild(root.firstChild);
       }
 
-      onlineMachines.forEach(function(uuid) {
-        var machineElement = c('li', { class:'item machine'}, uuid);
-        machineElement.classList.toggle('active', activeMachineUuid === uuid);
+      onlineMachines.forEach(function(machineDescription) {
+        var machineElement = c('li', {class:'machine'}, machineDescription.host);
+        machineElement.classList.toggle('active', activeMachineUuid === machineDescription.uuid);
         machineElement.onclick = function() {
-          setActiveMachine(uuid);
+          setActiveMachine(machineDescription.uuid);
         };
         root.appendChild(machineElement);
       });
