@@ -67,7 +67,7 @@ define(['c',
       c.div({}, [
         controls.preview
       ]),
-      c.div({}, [
+      c.div({ class: 'sidebar'}, [
         tabMenu = c.div({ class: 'ui tabular menu'}, [
           c('a', { class: 'item', 'data-tab': 'manual' }, 'Manual'),
           c('a', { class: 'item', 'data-tab': 'mdi' }, 'MDI'),

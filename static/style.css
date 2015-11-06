@@ -57,3 +57,7 @@
     width: 30rem;
     padding-left: 0;
 }
+
+.sidebar {
+    max-width: 30rem;
+}
