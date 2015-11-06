@@ -15,7 +15,7 @@ define(['eventbus',
 
 
     var renderer = new THREE.WebGLRenderer();
-    renderer.setSize(800, 600);
+    renderer.setSize(1, 1);
 
     var controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -43,6 +43,17 @@ define(['eventbus',
       controls.update();
     }
     render();
+
+    setInterval(function() {
+      var parent = renderer.domElement.parentNode;
+      if (!parent) { return; }
+      parent.style.overflow = 'hidden';
+      var w = $(parent).width();
+      var h = $(parent).height();
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    },100);
 
     return renderer.domElement;
   };
