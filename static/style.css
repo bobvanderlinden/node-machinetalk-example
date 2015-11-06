@@ -67,3 +67,19 @@
 .sidebar {
     max-width: 30rem;
 }
+
+.ui.list.messages {
+    border-radius: 5px 0 0px;
+    box-shadow: 0px 0px 5px gray ;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 30rem;
+    z-index: 100;
+    margin: 0px;
+    padding: 0.5rem;
+}
+
+.ui.list.messages:empty {
+    display: none;
+}

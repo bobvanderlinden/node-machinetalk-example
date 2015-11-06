@@ -72,6 +72,7 @@ define(['c',
 
     var root, tabMenu;
     root = c.div({ class: 'frame vertical fill' }, [
+      controls.messagelist,
       c.div({class: 'ui top attached pointing menu' }, menuitems),
       c.div({class: 'ui bottom attached segment frame fill'}, [
         c.div({ class: 'fill'}, [
