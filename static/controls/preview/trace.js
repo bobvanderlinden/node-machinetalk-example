@@ -1,17 +1,18 @@
 define([], function() {
   return function createTrace(machine) {
-    var traceMaxLength = 1000;
+    var traceMaxLength = 4096;
     var traceGeometry = new THREE.BufferGeometry();
     var tracePositions = new Float32Array(traceMaxLength * 3);
     traceGeometry.addAttribute('position', new THREE.BufferAttribute(tracePositions, 3));
-    var traceLength = 2;
+    var traceLength = 0;
     //traceGeometry.setDrawRange(0, traceLength);
     traceGeometry.dynamic = true;
 
     var traceMaterial = new THREE.LineBasicMaterial({
-      color: 0xffffff,
-      opacity: 1,
-      linewidth: 3
+      color: 0xff0000,
+      opacity: 0.5,
+      linewidth: 2,
+      transparent: true
     });
     var traceLine = new THREE.Line(traceGeometry, traceMaterial);
     traceLine.frustumCulled = false;
