@@ -36,6 +36,10 @@ define([], function() {
     return c('i', { class: 'icon ' + className },[]);
   };
 
+  c.text = function(content) {
+    return document.createTextNode(content);
+  };
+
   c.div = c.bind(null, 'div');
 
   return c;

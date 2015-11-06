@@ -1,6 +1,9 @@
 define(['eventbus','c'], function(eventbus, c) {
-  return function createHomeControl(machine) {
-    var homeButton = c('button', { class: 'ui button' }, 'Home');
+  return function createHomeAllControl(machine) {
+    var homeButton = c('button', { class: 'ui button icon labeled' }, [
+      c.icon('home'),
+      c.text('Home All')
+    ]);
     var axesCount = 0;
     homeButton.onclick = function() {
       machine.command('emcTaskSetMode', ['execute', 1]);
@@ -19,7 +22,6 @@ define(['eventbus','c'], function(eventbus, c) {
         return axis.homed;
       });
       axesCount = status.motion.axis.length;
-      homeButton.classList.toggle('active', !homed);
       homeButton.classList.toggle('primary', !homed);
     });
 
