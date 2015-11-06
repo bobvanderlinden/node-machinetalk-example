@@ -79,6 +79,7 @@ Machine.prototype.hasSubscriptions = function() {
   return this.subscriptions.length > 0;
 };
 Machine.prototype._handleIdle = function() {
+  debug('Machine ' + this.uuid + 'was not used by any socket. Disconnecting.');
   this.disconnect();
 };
 
