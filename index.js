@@ -95,7 +95,10 @@ Machine.prototype._handleIdle = function() {
 };
 
 Machine.prototype.connect = function() {
-  if (this.isConnected) { return; }
+  if (this.isConnected) {
+    debug('No need to connect, already connected');
+    return;
+  }
   debug('Machine ' + this.uuid + ' connect');
   this._initializeCommand(this.services.command);
   this._initializeStatus(this.services.status);
