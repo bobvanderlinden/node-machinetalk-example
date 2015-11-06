@@ -83,3 +83,8 @@
 .ui.list.messages:empty {
     display: none;
 }
+
+.jog.dpad, .jog.updown {
+    display: inline-block;
+    margin: 0 1em;
+}
