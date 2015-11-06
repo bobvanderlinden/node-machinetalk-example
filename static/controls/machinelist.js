@@ -60,7 +60,7 @@ define(['eventbus','c'], function(eventbus, c) {
     }
 
     var machinelist;
-    var root = c.div({class: 'machinelist'},[
+    var root = c.div({class: 'machinelist fill'},[
       c.div({ class: 'container'}, [
         c.text('Machines:'),
         machinelist = c('ul', {class: 'ui vertical menu'}, [])

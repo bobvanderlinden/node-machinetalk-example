@@ -31,9 +31,15 @@
     display: flex;
 }
 
-.frame > * {
+.frame > .fill {
     flex: 1;
 }
+
+.frame.vertical {
+    flex-direction: column;
+}
+
+
 
 .clear {
     clear: both;

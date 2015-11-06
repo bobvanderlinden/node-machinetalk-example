@@ -13,7 +13,9 @@ define(['c',
   'controls/homeaxis',
   'controls/program_open',
   'controls/program_run',
-  'controls/program_pauseresume'],
+  'controls/program_pauseresume',
+  'controls/menu/estop',
+  'controls/menu/power'],
   function(c,
     statusbox,
     messagelist,
@@ -29,7 +31,9 @@ define(['c',
     control_homeaxis,
     control_program_open,
     control_program_run,
-    control_program_pauseresume
+    control_program_pauseresume,
+    menuitem_estop,
+    menuitem_power
     ) {
   return function createMachineControl(machine) {
     var controls = {
@@ -51,6 +55,10 @@ define(['c',
       statusbox: statusbox(machine),
       messagelist: messagelist(machine)
     };
+    var menuitems = [
+      menuitem_estop(machine),
+      menuitem_power(machine)
+    ];
 
     function segment(name, children) {
       return c('div', { class: 'ui raised segment' }, [
@@ -63,37 +71,38 @@ define(['c',
     }
 
     var root, tabMenu;
-    root = c.div({ class: 'frame' }, [
-      c.div({}, [
-        controls.preview
-      ]),
-      c.div({ class: 'sidebar'}, [
-        tabMenu = c.div({ class: 'ui tabular menu'}, [
-          c('a', { class: 'item', 'data-tab': 'manual' }, 'Manual'),
-          c('a', { class: 'item', 'data-tab': 'mdi' }, 'MDI'),
-          c('a', { class: 'item', 'data-tab': 'program' }, 'Program'),
-          c('a', { class: 'item', 'data-tab': 'status' }, 'Status')
+    root = c.div({ class: 'frame vertical fill' }, [
+      c.div({class: 'ui top attached pointing menu' }, menuitems),
+      c.div({class: 'ui bottom attached segment frame fill'}, [
+        c.div({ class: 'fill'}, [
+          controls.preview
         ]),
-        c.div({ class: 'ui tab', 'data-tab': 'manual' }, [
-          controls.estop, controls.power,
-          divider(),
-          controls.homeall,
-          divider(),
-          controls.home0,
-          controls.home1,
-          controls.home2,
-        ]),
-        c.div({ class: 'ui tab', 'data-tab': 'mdi' }, [
-          controls.mdi
-        ]),
-        c.div({ class: 'ui tab', 'data-tab': 'program' }, [
-          controls.program_pauseresume,
-          divider(),
-          controls.program_open
-        ]),
-        c.div({ class: 'ui tab', 'data-tab': 'status' }, [
-          controls.statusbox
-        ]),
+        c.div({ class: 'sidebar fill'}, [
+          tabMenu = c.div({ class: 'ui tabular menu'}, [
+            c('a', { class: 'item', 'data-tab': 'manual' }, 'Manual'),
+            c('a', { class: 'item', 'data-tab': 'mdi' }, 'MDI'),
+            c('a', { class: 'item', 'data-tab': 'program' }, 'Program'),
+            c('a', { class: 'item', 'data-tab': 'status' }, 'Status')
+          ]),
+          c.div({ class: 'ui tab', 'data-tab': 'manual' }, [
+            controls.homeall,
+            divider(),
+            controls.home0,
+            controls.home1,
+            controls.home2,
+          ]),
+          c.div({ class: 'ui tab', 'data-tab': 'mdi' }, [
+            controls.mdi
+          ]),
+          c.div({ class: 'ui tab', 'data-tab': 'program' }, [
+            controls.program_pauseresume,
+            divider(),
+            controls.program_open
+          ]),
+          c.div({ class: 'ui tab', 'data-tab': 'status' }, [
+            controls.statusbox
+          ]),
+        ])
       ])
     ]);
 
