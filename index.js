@@ -62,12 +62,14 @@ Machine.prototype._handleOffline = function() {
 };
 
 Machine.prototype.subscribe = function(socket) {
+  debug('Subcribe to machine', this.uuid);
   clearTimeout(this.idleTimeout);
   this.subscriptions.push(socket);
   this.connect();
   socket.emit('machine:status', this.uuid, this.clients.status.status);
 };
 Machine.prototype.unsubscribe = function(socket) {
+  debug('Unsubscribe from machine', this.uuid);
   this.subscriptions.splice(this.subscriptions.indexOf(socket), 1);
   if (!this.hasSubscriptions()) {
     this.idleTimeout = setTimeout(this._handleIdle.bind(this), 5000);
