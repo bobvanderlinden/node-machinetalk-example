@@ -10,7 +10,7 @@ define(['c'], function(c) {
         path = machine.status.config.remote_path + '/' + path;
       }
       machine.command('emcTaskSetMode', ['execute', 2]);
-      machine.command('emcTaskPlanOpen', ['execute', pathinput.value]);
+      machine.command('emcTaskPlanOpen', ['execute', path]);
     }
 
     return c.div({ class: 'ui action input' }, [
