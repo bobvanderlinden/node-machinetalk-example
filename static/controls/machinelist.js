@@ -30,17 +30,20 @@ define(['eventbus','c'], function(eventbus, c) {
 
 
     function updateDom() {
-      while (root.firstChild) {
-        root.removeChild(root.firstChild);
+      while (machinelist.firstChild) {
+        machinelist.removeChild(machinelist.firstChild);
       }
 
       onlineMachines.forEach(function(machineDescription) {
-        var machineElement = c('li', {class:'machine'}, machineDescription.host);
+        var machineElement = c('a', {class:'item machine'}, [
+          c('h3',{}, machineDescription.host),
+          c('p',{}, machineDescription.uuid)
+        ]);
         machineElement.classList.toggle('active', activeMachineUuid === machineDescription.uuid);
         machineElement.onclick = function() {
           setActiveMachine(machineDescription.uuid);
         };
-        root.appendChild(machineElement);
+        machinelist.appendChild(machineElement);
       });
     }
 
@@ -56,7 +59,13 @@ define(['eventbus','c'], function(eventbus, c) {
       updateDom();
     }
 
-    var root = c('ul', {class: 'ui list machines'}, []);
+    var machinelist;
+    var root = c.div({class: 'machinelist'},[
+      c.div({ class: 'container'}, [
+        c.text('Machines:'),
+        machinelist = c('ul', {class: 'ui vertical menu'}, [])
+      ])
+    ]);
     return root;
   };
 });

@@ -40,3 +40,20 @@
 }
 
 .ui.button > .right.icon:not(.button) { margin: 0em; }
+
+.machinelist {
+    text-align: center;
+    margin: 2em;
+}
+
+.machinelist > .container {
+    width: 30rem;
+    margin: auto;
+    text-align: left;
+}
+
+.machinelist > .container > .ui.vertical.menu {
+    text-align: left;
+    width: 30rem;
+    padding-left: 0;
+}
