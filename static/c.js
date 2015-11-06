@@ -32,6 +32,10 @@ define([], function() {
     return button;
   };
 
+  c.icon = function createIcon(className) {
+    return c('i', { class: 'icon ' + className },[]);
+  };
+
   c.div = c.bind(null, 'div');
 
   return c;
