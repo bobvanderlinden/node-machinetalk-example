@@ -110,7 +110,6 @@ define(['c'], function(c) {
           geometry: new THREE.Geometry()
         };
       }
-      console.log(item);
     }
 
     function endPath() {

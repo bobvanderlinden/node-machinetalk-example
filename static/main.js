@@ -6,7 +6,6 @@ define(['eventbus', 'c', 'eventemitter', 'controls/machinelist', 'controls/machi
   Machine.prototype = new EventEmitter();
   Machine.prototype.command = function(/*...*/) {
     var args = Array.prototype.slice.call(arguments, 0);
-    console.log(args);
     console.log(['machine:command', this.uuid].concat(args));
     eventbus.emit.apply(eventbus, ['machine:command', this.uuid].concat(args));
   };
