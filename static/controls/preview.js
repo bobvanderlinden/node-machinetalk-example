@@ -48,8 +48,9 @@ define(['eventbus',
       var parent = renderer.domElement.parentNode;
       if (!parent) { return; }
       parent.style.overflow = 'hidden';
-      var w = $(parent).width();
-      var h = $(parent).height();
+      parent.style.display = 'block';
+      var w = $(parent).innerWidth();
+      var h = $(parent).innerHeight()-5;
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);

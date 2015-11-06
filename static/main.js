@@ -91,10 +91,7 @@ define(['eventbus', 'c', 'eventemitter', 'controls/machinelist', 'controls/machi
     require(['socket']);
   }
 
-  console.log('readystate', document.readyState);
-  if (document.readyState === 'complete') {
+  $(function() {
     onDomLoaded();
-  } else {
-    document.addEventListener("DOMContentLoaded", onDomLoaded);
-  }
+  });
 });
