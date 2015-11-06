@@ -53,15 +53,44 @@ define(['c',
       ].concat(children));
     }
 
-    return c('div', { class: 'ui segments'}, [
-      segment('Messages', controls.messagelist),
-      segment('Preview', [controls.preview]),
-      segment('Mode', [controls.mode]),
-      segment('State', [controls.estop, controls.power]),
-      segment('Manual', [controls.home]),
-      segment('MDI', [controls.mdi]),
-      segment('Program', [controls.program_open, controls.program_run, controls.program_pauseresume]),
-      segment('Status', [controls.statusbox])
+    function divider() {
+      return c.div({ class: 'ui divider' },[]);
+    }
+
+    var root, tabMenu;
+    root = c.div({ class: 'frame' }, [
+      c.div({}, [
+        controls.preview
+      ]),
+      c.div({}, [
+        tabMenu = c.div({ class: 'ui tabular menu'}, [
+          c('a', { class: 'item', 'data-tab': 'manual' }, 'Manual'),
+          c('a', { class: 'item', 'data-tab': 'mdi' }, 'MDI'),
+          c('a', { class: 'item', 'data-tab': 'program' }, 'Program'),
+          c('a', { class: 'item', 'data-tab': 'status' }, 'Status')
+        ]),
+        c.div({ class: 'ui tab', 'data-tab': 'manual' }, [
+          controls.estop, controls.power,
+          controls.home
+        ]),
+        c.div({ class: 'ui tab', 'data-tab': 'mdi' }, [
+          controls.mdi
+        ]),
+        c.div({ class: 'ui tab', 'data-tab': 'program' }, [
+          controls.program_pauseresume,
+          divider(),
+          controls.program_open
+        ]),
+        c.div({ class: 'ui tab', 'data-tab': 'status' }, [
+          controls.statusbox
+        ]),
+      ])
     ]);
+
+    $('.menu .item', root).tab({
+      context: $(root)
+    });
+
+    return root;
   };
 });

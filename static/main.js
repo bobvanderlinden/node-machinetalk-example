@@ -28,7 +28,9 @@ define(['eventbus', 'c', 'eventemitter', 'controls/machines', 'controls/machine'
   });
   eventbus.on('machine:status', function(uuid, status) {
     console.log('machine:status', uuid, status);
-    getMachine(uuid).emit('status', status);
+    var machine = getMachine(uuid);
+    machine.status = status;
+    machine.emit('status', status);
   });
   eventbus.on('machine:error', function(uuid, type, error) {
     console.log('machine:error', uuid, type, error);
@@ -47,34 +49,44 @@ define(['eventbus', 'c', 'eventemitter', 'controls/machines', 'controls/machine'
   });
 
   var activeMachine = null;
+  var machinelistContainer;
+  var machineContainer;
+
   eventbus.on('machine:active', function(uuid) {
+    setActiveMachine(uuid && getMachine(uuid));
+  });
+
+  eventbus.on('machine:inactive', function() {
+    setActiveMachine(null);
+  });
+
+  function setActiveMachine(machine) {
+    if (machine === activeMachine) { return; }
     if (activeMachine) {
       activeMachine.emit('inactive');
     }
-    activeMachine = uuid && getMachine(uuid);
-
-    while (machineContainer.firstChild) {
-        machineContainer.removeChild(machineContainer.firstChild);
+    activeMachine = machine;
+    while (rootElement.firstChild) {
+        rootElement.removeChild(rootElement.firstChild);
     }
     if (activeMachine) {
-      machineContainer.appendChild(control_machine(activeMachine));
+      rootElement.appendChild(control_machine(activeMachine));
       activeMachine.emit('active');
+    } else {
+      rootElement.appendChild(control_machines());
     }
-  });
+  }
 
-
-  var machineContainer = c('div', { class: 'machinecontainer' }, []);
-
-  var rootElement = c('div', { class: 'main ui container' }, [
-    control_machines(),
-    machineContainer
+  var rootElement = c.div({ class: 'screen frame' }, [
+    control_machines()
   ]);
 
-  require(['socket']);
-
   function onDomLoaded() {
-    console.log(typeof rootElement);
     document.body.appendChild(rootElement);
+
+    // HACK: Haven't found a way to initialize socket.io without connecting to server.
+    //       We need to wait until other components are loaded before loading socket.io.
+    require(['socket']);
   }
 
   console.log('readystate', document.readyState);

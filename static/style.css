@@ -7,3 +7,35 @@
     display: inline-block;
     background-color: #3333ff;
 }
+
+.screen {
+    position: absolute;
+    left:0; right: 0;
+    top: 0; bottom: 0;
+}
+
+.fill {
+    flex: 1;
+}
+
+.ui.tab {
+    visibility: collapse;
+}
+
+.ui.tab.active {
+    visibility: visible;
+}
+
+.frame {
+    display: flex;
+}
+
+.frame > * {
+    flex: 1;
+}
+
+.clear {
+    clear: both;
+}
+
+.ui.button > .right.icon:not(.button) { margin: 0em; }
