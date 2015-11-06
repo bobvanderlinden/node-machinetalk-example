@@ -1,4 +1,4 @@
-define(['eventbus', 'c', 'eventemitter', 'controls/machines', 'controls/machine'], function(eventbus, c, EventEmitter, control_machines, control_machine) {
+define(['eventbus', 'c', 'eventemitter', 'controls/machinelist', 'controls/machine'], function(eventbus, c, EventEmitter, control_machinelist, control_machine) {
   function Machine(uuid) {
     this.uuid = uuid;
     EventEmitter.call(this);
@@ -73,12 +73,12 @@ define(['eventbus', 'c', 'eventemitter', 'controls/machines', 'controls/machine'
       rootElement.appendChild(control_machine(activeMachine));
       activeMachine.emit('active');
     } else {
-      rootElement.appendChild(control_machines());
+      rootElement.appendChild(control_machinelist());
     }
   }
 
   var rootElement = c.div({ class: 'screen frame' }, [
-    control_machines()
+    control_machinelist()
   ]);
 
   function onDomLoaded() {
