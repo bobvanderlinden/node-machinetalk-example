@@ -235,6 +235,11 @@ io.on('connection', function(socket) {
     subscribedMachines.splice(subscribedMachines.indexOf(machine), 1);
   });
 
+  socket.on('error', function(err) {
+    console.error('Received error from socket', err, err.stack);
+    socket.disconnect();
+  });
+
   socket.on('disconnect', function() {
     debug('Socket disconnected');
     subscribedMachines.forEach(function(machine) {
