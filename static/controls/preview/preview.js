@@ -43,10 +43,17 @@ define(['c'], function(c) {
     machine.on('status', function(status) {
       if (status.task.file !== currentFile) {
         currentFile = status.task.file;
+        clear();
         machine.command('emcTaskPlanOpen', ['preview', currentFile]);
         machine.command('emcTaskPlanRun', ['preview', 0]);
       }
     });
+
+    function clear() {
+      while(previewObject.children.length > 0) {
+        previewObject.remove(previewObject.children[0]);
+      }
+    }
 
     function createObjects(preview) {
 
