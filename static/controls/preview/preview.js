@@ -44,8 +44,10 @@ define(['c'], function(c) {
       if (status.task.file !== currentFile) {
         currentFile = status.task.file;
         clear();
-        machine.command('emcTaskPlanOpen', ['preview', currentFile]);
-        machine.command('emcTaskPlanRun', ['preview', 0]);
+        if (currentFile !== '') {
+          machine.command('emcTaskPlanOpen', ['preview', currentFile]);
+          machine.command('emcTaskPlanRun', ['preview', 0]);
+        }
       }
     });
 
