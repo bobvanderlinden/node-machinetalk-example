@@ -4,5 +4,6 @@ runCommand "node-machinetalk-example" {
 		(avahi.override { withLibdnssdCompat = true; })
 		nodejs
 		zeromq
+		python
 	];
 } ""
