@@ -9,7 +9,7 @@
   "dependencies": {
     "debug": "^2.2.0",
     "express": "^4.13.3",
-    "machinetalk": "^1.1.0",
+    "machinetalk": "bobvanderlinden/node-machinetalk",
     "socket.io": "^1.3.7"
   },
   "scripts": {
