@@ -16,6 +16,7 @@ define(['c',
   'controls/program_open',
   'controls/program_run',
   'controls/program_pauseresume',
+  'controls/feedrate',
   'controls/menu/estop',
   'controls/menu/power'],
   function(c,
@@ -36,6 +37,7 @@ define(['c',
     control_program_open,
     control_program_run,
     control_program_pauseresume,
+    control_feedrate,
     menuitem_estop,
     menuitem_power
     ) {
@@ -58,6 +60,7 @@ define(['c',
       program_open: control_program_open(machine),
       program_run: control_program_run(machine),
       program_pauseresume: control_program_pauseresume(machine),
+      feedrate: control_feedrate(machine),
       statusbox: statusbox(machine),
       messagelist: messagelist(machine)
     };
@@ -99,7 +102,9 @@ define(['c',
             controls.home2,
             divider(),
             controls.jog_dpad,
-            controls.jog_updown
+            controls.jog_updown,
+            divider(),
+            controls.feedrate
           ]),
           c.div({ class: 'ui tab', 'data-tab': 'mdi' }, [
             controls.mdi
